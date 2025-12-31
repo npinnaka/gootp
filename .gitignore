@@ -1,0 +1,59 @@
+# Go binaries and build artifacts
+/gootp
+/app
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Build directories
+/bin/
+/build/
+/dist/
+/out/
+
+# Coverage files
+coverage.*
+*.coverprofile
+*.cov
+*.lcov
+coverage.out
+
+# OS / Editor files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
+
+# Environment / local config
+.env
+.env.*
+.envrc
+*.local
+
+# Logs / temp
+*.log
+logs/
+debug/
+tmp/
+
+# Redis dump files
+*.rdb
+*.aof
+dump.rdb
+appendonly.aof
+
+# Docker-related local files
+.docker/
+docker-data/
+
+# Node (if accidentally added)
+/node_modules/
+
+# Go workspace files (if used locally)
+go.work
+go.work.sum

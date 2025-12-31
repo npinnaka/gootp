@@ -1,0 +1,141 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "gootp OTP API",
+    "version": "1.0.0",
+    "description": "Simple OTP generation and validation service backed by Redis."
+  },
+  "servers": [
+    { "url": "/" }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "example": "ok" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generate": {
+      "post": {
+        "summary": "Generate an OTP for a user",
+        "description": "Creates a 6-digit OTP for the given userId and stores it in Redis with a 5 minute TTL.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GenerateRequest" },
+              "examples": {
+                "json": {
+                  "value": { "userId": "user-123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP generated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GenerateResponse" },
+                "examples": {
+                  "success": {
+                    "value": { "userId": "user-123", "otp": "123456", "expiresInSeconds": 300 }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (missing userId)",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "summary": "Validate an OTP",
+        "description": "Validates the provided OTP for the given userId. On success, the OTP is consumed (deleted).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ValidateRequest" },
+              "examples": {
+                "json": {
+                  "value": { "userId": "user-123", "otp": "123456" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validation result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidateResponse" },
+                "examples": {
+                  "valid": { "value": { "valid": true, "message": "otp valid" } },
+                  "invalid": { "value": { "valid": false, "message": "invalid otp" } },
+                  "expired": { "value": { "valid": false, "message": "otp not found or expired" } }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request (missing userId or otp)" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GenerateRequest": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string" }
+        },
+        "required": ["userId"]
+      },
+      "GenerateResponse": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string" },
+          "otp": { "type": "string", "description": "6-digit code" },
+          "expiresInSeconds": { "type": "integer", "example": 300 }
+        },
+        "required": ["userId", "otp", "expiresInSeconds"]
+      },
+      "ValidateRequest": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string" },
+          "otp": { "type": "string" }
+        },
+        "required": ["userId", "otp"]
+      },
+      "ValidateResponse": {
+        "type": "object",
+        "properties": {
+          "valid": { "type": "boolean" },
+          "message": { "type": "string" }
+        },
+        "required": ["valid" ]
+      }
+    }
+  }
+}
