@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   redis:
-    image: redis:7-alpine
+    image: redis:8.4.0-alpine
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
     command: ["sh", "-c", "exec redis-server --appendonly yes --requirepass \"$REDIS_PASSWORD\""]
@@ -12,8 +12,8 @@ services:
       - redis-data:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a \"$REDIS_PASSWORD\" ping | grep PONG"]
-      interval: 5s
-      timeout: 3s
+      interval: 10s
+      timeout: 5s
       retries: 10
     restart: unless-stopped
 

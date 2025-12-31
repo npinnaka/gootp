@@ -1,8 +1,8 @@
 package handler
 
 import (
-	crypto_rand "crypto/rand"
-	encoding_json "encoding/json"
+	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"net/http"
@@ -116,7 +116,7 @@ func generateOTP(digits int) (string, error) {
 	for i := 0; i < digits; i++ {
 		max *= 10
 	}
-	n, err := crypto_rand.Int(crypto_rand.Reader, big.NewInt(max))
+	n, err := rand.Int(rand.Reader, big.NewInt(max))
 	if err != nil {
 		return "", err
 	}
@@ -138,7 +138,7 @@ func subtleConstTimeCompare(a, b string) bool {
 
 func decodeJSON(r *http.Request, v any) error {
 	defer r.Body.Close()
-	dec := encoding_json.NewDecoder(r.Body)
+	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
 	return dec.Decode(v)
 }
@@ -146,5 +146,5 @@ func decodeJSON(r *http.Request, v any) error {
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = encoding_json.NewEncoder(w).Encode(v)
+	_ = json.NewEncoder(w).Encode(v)
 }
