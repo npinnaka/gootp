@@ -1,6 +1,6 @@
 module gootp
 
-go 1.22
+go 1.25
 
 require (
 	github.com/alicebob/miniredis/v2 v2.34.0

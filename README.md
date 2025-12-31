@@ -108,7 +108,7 @@ curl -s http://localhost:8080/validate \
 ```
 
 Development
-- Requirements: Go 1.22+
+- Requirements: Go 1.25+
 - Run tests:
 ```bash
 go test ./...
